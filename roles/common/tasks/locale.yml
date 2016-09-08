@@ -1,0 +1,34 @@
+---
+
+# correct locales (DigitalOcean Standard-Image Issue?)
+
+- locale_gen:
+                name=de_DE.UTF-8
+                state=present
+
+- locale_gen:
+                name=en_US.UTF-8
+                state=present
+
+- name: fix LC_ALL
+  lineinfile: dest=/etc/default/locale
+                regexp='^LC_ALL'
+                insertafter=EOF
+                line='LC_ALL="en_US.UTF-8"'
+                state=present
+  register: locale_update
+
+
+- debug: msg="{{ locale_update.changed }}"
+
+
+- name: fix LC_ALL
+  lineinfile: dest=/etc/default/locale
+                regexp='^LC_ALL'
+                insertafter=EOF
+                line='LC_ALL="en_US.UTF-8"'
+                state=present
+                
+- name: reconfigure locales
+  shell: dpkg-reconfigure locales
+  when: locale_update.changed

@@ -1,6 +1,6 @@
 ***Deploy mzl.net***
 
-1) Start Droplet ( Ubuntu 16.04 x64 - https://cloud.digitalocean.com/droplets/new )
+1) Start Droplet ( Ubuntu 14.04 x64 - https://cloud.digitalocean.com/droplets/new )
 2) run ansible - ansible-playbook -i hosts site.yml
 3) enjoy
 

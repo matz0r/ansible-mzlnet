@@ -1,0 +1,25 @@
+---
+
+# update system - un/install tools
+
+- name: updates sources
+  apt: update_cache=yes
+  
+- name: upgrade packages
+  apt: upgrade=full
+  
+- name: remove unwanted tools
+  apt: name={{ item }} state=absent
+  with_items:
+    - command-not-found
+
+- name: install needed tools
+  apt: name={{ item }} state=present
+  with_items:
+    - acl
+    - curl
+    - software-properties-common
+    - iptables-persistent
+    - nethogs
+    - htop
+

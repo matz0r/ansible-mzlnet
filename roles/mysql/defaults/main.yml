@@ -1,0 +1,10 @@
+---
+mysql_root_user: root
+mysql_root_pass: ayKxfon4Na29Aabl9a
+
+mysql_db_host: localhost
+mysql_db_name: mzlnet 
+mysql_db_user: app
+mysql_db_pw: dJnxXeL5fKeu4UimNaD1
+
+mysql_port: 3306

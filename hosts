@@ -1,6 +1,5 @@
-[webserver]
-web1.mzl.me
+[webservers]
+46.101.159.234
 
-[dbserver]
-124.43.43.1
-34.34.353.1
+[dbservers]
+46.101.159.234

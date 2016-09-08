@@ -1,0 +1,10 @@
+---
+- name: Install MySQL
+  hosts: dbservers
+  user: root
+  # remote_user: user
+  # sudo: yes
+
+  roles:
+    - common
+    - mysql

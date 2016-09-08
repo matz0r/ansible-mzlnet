@@ -1,0 +1,64 @@
+# install tls certificates via letsencrypt
+
+# https://dominicpratt.de/lets-encrypt-nutzen-eine-anleitung/
+
+# http://letsencrypt.readthedocs.org/en/latest/using.html ----- https://letsencrypt.org/howitworks/
+# https://community.letsencrypt.org/t/using-the-webroot-domain-verification-method/1445/6
+# https://community.letsencrypt.org/t/using-the-webroot-domain-verification-method/1445/47
+# https://gist.github.com/xrstf/581981008b6be0d2224f
+# config https://copy.mx/view/c8f5d857
+# ansible https://github.com/thefinn93/ansible-letsencrypt/blob/master/tasks/main.yml
+#         https://github.com/thefinn93/ansible-letsencrypt
+# host https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-14-04
+
+
+--------------------
+/root/.local/share/letsencrypt/bin/letsencrypt certonly --webroot \ 
+--webroot-path /var/www/example --renew-by-default --email \
+example@example.org --text --agree-tos --agree-dev-preview -d \
+site.example.org -d www.site.example.org
+
+--------------------
+cd /usr/local
+git clone https://github.com/letsencrypt/letsencrypt 
+cd letsencrypt/
+./letsencrypt-auto
+
+
+--------------------
+
+letsencrypt -c /etc/letsencrypt/webroot.ini --user-agent centminmod-centos6-webroot --webroot-path /home/nginx/domains/le10.http2ssl.xyz/public -d le10.http2ssl.xyz auth
+
+# webroot.ini general config ini
+
+rsa-key-size = 2048
+
+# Always use the staging/testing server
+#server = https://acme-staging.api.letsencrypt.org/directory
+
+# for beta invitees
+server = https://acme-v01.api.letsencrypt.org/directory
+
+# Uncomment and update to register with the specified e-mail address
+email = myvalid@emailaddy.com
+
+# Uncomment to use a text interface instead of ncurses
+text = True
+agree-tos = True
+agree-dev-preview = True
+renew-by-default = True
+
+authenticator = webroot
+
+--------------------
+
+#DOWNLOAD
+
+# INSTALL 
+./letsencrypt-auto certonly --rsa-key-size 4096 -d mzl.me -d www.mzl.me -d beta.mzl.me
+
+# RENEW
+# service stop nginx
+./letsencrypt-auto certonly --standalone -d mzl.me -d www.mzl.me -d beta.mzl.me
+
+

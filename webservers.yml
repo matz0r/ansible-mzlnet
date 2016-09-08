@@ -1,0 +1,13 @@
+---
+- name: Install Laravel and Nginx with PHP-FPM
+  hosts: webservers
+  user: root
+  # remote_user: user
+  # sudo: yes
+
+  roles:
+    - common
+#    - nginx
+#    - php-fpm
+#    - website
+#    - letsencrypt

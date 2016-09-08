@@ -10,20 +10,21 @@
     - php5-imagick
     - php5-gd
     - php5-curl
-    - php5-json # aptitude error?
+    - php5-json
     - php5-memcached
     - php5-memcache
     - php5-mcrypt
-  
-- name: link mcrypt ini
-  file: src=/etc/php5/conf.d/mcrypt.ini dest=/etc/php5/mods-available/mcrypt.ini state=link
-  notify: restart nginx
+  register: php_update
   
 - name: enable mcrypt
   shell: php5enmod mcrypt
+  when: php_update.changed
 
 - name: set fix pathinfo
   lineinfile: dest=/etc/php5/fpm/php.ini regexp="cgi\.fix_pathinfo=0" insertafter="^;cgi\.fix_pathinfo=1" line="cgi.fix_pathinfo=0" state=present
+
+- name: set fix pathinfo expose_php = Off
+  lineinfile: dest=/etc/php5/fpm/php.ini regexp="expose_php = 0" insertafter="^;cgi\.fix_pathinfo=1" line="cgi.fix_pathinfo=0" state=present
 
 - name: setup local socket
   lineinfile: 'dest=/etc/php5/fpm/pool.d/www.conf

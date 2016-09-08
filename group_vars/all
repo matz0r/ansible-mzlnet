@@ -1,14 +1,4 @@
 ---
 
 project_name: mzlnet
-
-# mysql settings
-mzl_db_host: localhost
-mzl_db_database: mzlnet 
-mzl_db_user: root
-mzl_db_pw: dJnxXeL5fKeu4UimNaD1
-
-mysql_port: 3306
-
-# hostname
 server_hostname: mzl.me

@@ -1,0 +1,39 @@
+---
+
+# create basic ufw (firewall) rules
+
+- name: check ufw status
+  command: ufw status
+  register: ufw_check
+  changed_when: "'Status: inactive' in ufw_check.stdout"
+
+#- debug: var=ufw_check
+#  when: ufw_check.changed
+
+- name: disable all incoming
+  command: ufw default deny incoming
+  when: ufw_check.changed
+
+- name: enable all outgoing
+  command: ufw default allow outgoing
+  when: ufw_check.changed
+
+- name: allow ssh
+  ufw: rule=allow port=22
+  when: ufw_check.changed
+
+- name: allow http
+  ufw: rule=allow port=80 proto=tcp
+  when: ufw_check.changed
+
+- name: allow http2
+  ufw: rule=allow port=443 proto=tcp
+  when: ufw_check.changed
+
+- name: disable bruteforce for ssh
+  ufw: rule=limit port=ssh proto=tcp
+  when: ufw_check.changed
+
+- name: enable firewall
+  ufw: state=enabled
+  when: ufw_check.changed

@@ -1,0 +1,42 @@
+---
+
+# create a swap file 
+
+- name: check swap-file status
+  command: swapon -s
+  register: swap_check
+  changed_when: "swap_check.stdout.find('swapfile') == -1"
+
+- name: create swap file
+  command: fallocate -l {{ swap_file_size }} /swapfile creates={{ swap_file_location }}
+  when: swap_check.stdout.find('swapfile') == -1
+
+- name: change swap file permissions
+  file: path={{ swap_file_location }}
+        owner=root
+        group=root
+        mode=0600
+  when: swap_check.changed
+
+- name: change filetype to swap
+  command: mkswap {{ swap_file_location }}
+  when: swap_check.changed
+
+- name: activate swap file
+  command: swapon {{ swap_file_location }}
+  when: swap_check.changed
+
+- name: perist swap on reboot (create fstab entry)
+  mount: name=none
+         src={{ swap_file_location }}
+         fstype=swap
+         opts=sw
+         passno=0
+         dump=0
+         state=present
+  when: swap_check.changed
+
+- name: lower swappiness
+  sysctl:
+    name: vm.swappiness
+    value: "{{ swap_swappiness }}"
