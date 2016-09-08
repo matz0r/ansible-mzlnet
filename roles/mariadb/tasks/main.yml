@@ -1,0 +1,28 @@
+---
+
+- name: Get Keys for MariaDB
+  shell: "apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db"
+
+- name: Add Repository for MariaDB
+  shell: add-apt-repository 'deb http://mirror2.hs-esslingen.de/mariadb/repo/10.0/ubuntu saucy main'
+  
+- name: Install MariaDB
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+   - mariadb-server
+   - mytop 
+   - python-mysqldb
+
+- name: Customize MariaDB Configuration 
+  template: src=mzl.my.cnf dest=/etc/mysql/my.cnf
+  notify: restart mysql
+
+- name: Create Database  
+  mysql_db: name={{ mzl_db_database }} state=present
+  
+- name: Create User
+  mysql_user: name={{ mzl_db_user }}
+              password={{ mzl_db_pw }}
+              priv={{ mzl_db_database }}.*:ALL
+              host='{{ mzl_db_host }}'
+              state=present 

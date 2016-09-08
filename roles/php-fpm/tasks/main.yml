@@ -1,0 +1,35 @@
+---
+- name: Install php-fpm and deps 
+  apt: name={{ item }} state=present
+  with_items:
+    - php5
+    - php5-cli
+    - php5-fpm
+    - php5-sqlite
+    - php5-mysql
+    - php5-imagick
+    - php5-gd
+    - php5-curl
+    - php5-json # aptitude error?
+    - php5-memcached
+    - php5-memcache
+    - php5-mcrypt
+  
+- name: link mcrypt ini
+  file: src=/etc/php5/conf.d/mcrypt.ini dest=/etc/php5/mods-available/mcrypt.ini state=link
+  notify: restart nginx
+  
+- name: enable mcrypt
+  shell: php5enmod mcrypt
+
+- name: set fix pathinfo
+  lineinfile: dest=/etc/php5/fpm/php.ini regexp="cgi\.fix_pathinfo=0" insertafter="^;cgi\.fix_pathinfo=1" line="cgi.fix_pathinfo=0" state=present
+
+- name: setup local socket
+  lineinfile: 'dest=/etc/php5/fpm/pool.d/www.conf
+              regexp="listen = /var/run/php5-fpm.sock" insertafter="^listen = 127\.0\.0\.1:9000"
+              line="listen = /var/run/php5-fpm.sock" state=present'
+
+- name: remove old listener
+  lineinfile: 'dest=/etc/php5/fpm/pool.d/www.conf regexp="^listen = 127\.0\.0\.1:9000" state=absent'
+  notify: restart php5-fpm

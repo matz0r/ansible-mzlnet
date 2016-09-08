@@ -1,0 +1,28 @@
+---
+- name: updates sources
+  apt: update_cache=yes
+  
+- name: upgrade packages
+  apt: upgrade=full
+  
+- name: install needed tools
+  apt: name={{ item }} state=present
+  with_items:
+    - acl
+    - curl
+    - screen
+    - software-properties-common
+
+- name: fix LC_ALL (digital ocean issue?) 
+  lineinfile: dest=/etc/default/locale
+                regexp='^LC_ALL'
+                insertafter=EOF
+                line='LC_ALL="en_US.UTF-8"'
+                state=present
+                
+- name: reconfigure locales
+  shell: dpkg-reconfigure locales 
+
+#- name: set up iptables rules
+#  copy: src=iptables-save dest=/etc/sysconfig/iptables
+#  notify: restart iptables

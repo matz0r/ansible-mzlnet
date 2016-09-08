@@ -1,0 +1,13 @@
+---
+- name: Install Laravel, MySQL and Nginx with PHP-FPM
+  hosts: webserver
+  user: root
+  # remote_user: user
+  # sudo: yes
+
+  roles:
+    - common
+    - mysql 
+    - nginx
+    - php-fpm
+    - website

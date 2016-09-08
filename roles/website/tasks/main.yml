@@ -1,0 +1,31 @@
+---
+- name: create www-root
+  shell: mkdir -p /home/www/mzlnet
+  
+- name: Install Composer
+  shell: curl -sS https://getcomposer.org/installer|/usr/bin/php;/bin/mv /tmp/composer.phar /usr/local/bin/composer chdir=/tmp/ creates=/usr/local/bin/composer
+ 
+- name: Install Laravel
+  shell: composer create-project laravel/laravel mzlnet --prefer-dist chdir=/home/www/ creates=/home/www/mzlnet/readme.md
+ 
+- name: Copy database config file
+  template: src=database.php dest=/home/www/mzlnet/app/config/database.php backup=yes
+
+- name: Install Laravel
+  shell: /usr/bin/php artisan migrate chdir=/home/www/mzlnet/
+ 
+- name: Change ownership of mzlnet
+  file: path=/home/www/ owner=www-data group=www-data state=directory recurse=yes
+
+#- name: set acl
+#  file: path=/home/www/ owner=www-data group=www-data mode=0644
+  
+- name: remove all enabled sites
+  shell: rm /etc/nginx/sites-enabled/* chdir=/tmp/ 
+  
+- name: copy nginx vhost
+  template: src=nginx_vhost.conf dest=/etc/nginx/sites-available/001-mzlnet
+  
+- name: link nginx vhost to sites enabled
+  file: src=/etc/nginx/sites-available/001-mzlnet dest=/etc/nginx/sites-enabled/001-mzlnet owner=www-data group=www-data state=link
+  notify: restart nginx
